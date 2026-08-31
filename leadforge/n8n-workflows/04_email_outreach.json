@@ -1,0 +1,98 @@
+{
+  "name": "Workflow 4 — Email Outreach & Tracking",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {"path": "leadforge/outreach", "options": {}},
+      "id": "outreach-webhook", "name": "Outreach Webhook",
+      "type": "n8n-nodes-base.webhook", "typeVersion": 1,
+      "position": [250, 300], "webhookId": "leadforge-outreach"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.HERMES_API_URL}}/v1/chat/completions",
+        "headerParameters": {"parameters": [
+          {"name": "Authorization", "value": "Bearer {{$env.HERMES_API_KEY}}"},
+          {"name": "Content-Type", "value": "application/json"}
+        ]},
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "model", "value": "hermes-agent"},
+          {"name": "messages", "value": "=[{\"role\":\"system\",\"content\":\"You are the Outreach Agent. Write a personalized email. Reference their business, reviews, and the demo website. Include a clear CTA to view the website. Return JSON: {subject, body}\"},{\"role\":\"user\",\"content\":\"Write outreach email for this business with a generated demo website\"}]"}
+        ]}
+      },
+      "id": "generate-email", "name": "Generate Email",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/emails",
+        "headerParameters": {"parameters": [
+          {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+          {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"},
+          {"name": "Content-Type", "value": "application/json"},
+          {"name": "Prefer", "value": "return=representation"}
+        ]},
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "business_id", "value": "={{$json.body.business_id}}"},
+          {"name": "subject", "value": "={{JSON.parse($json.choices[0].message.content).subject}}"},
+          {"name": "message", "value": "={{JSON.parse($json.choices[0].message.content).body}}"},
+          {"name": "status", "value": "QUEUED"}
+        ]}
+      },
+      "id": "store-email", "name": "Store Email",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "headerParameters": {"parameters": [
+          {"name": "Authorization", "value": "Bearer {{$env.EMAIL_API_KEY}}"},
+          {"name": "Content-Type", "value": "application/json"}
+        ]},
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "from", "value": "={{$env.EMAIL_FROM}}"},
+          {"name": "to", "value": "={{$json[0].contact_email}}"},
+          {"name": "subject", "value": "={{$json[0].subject}}"},
+          {"name": "html", "value": "={{$json[0].message}}"},
+          {"name": "headers", "value": "={\"X-Entity-Type\":\"leadforge\",\"X-Business-Id\":\"{{$json[0].business_id}}\"}"}
+        ]}
+      },
+      "id": "send-email", "name": "Send Email",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/emails?id=eq.{{$json[\"X-Email-Id\"]}}",
+        "headerParameters": {"parameters": [
+          {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+          {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"},
+          {"name": "Content-Type", "value": "application/json"}
+        ]},
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "status", "value": "SENT"},
+          {"name": "sent_at", "value": "={{$now}}"}
+        ]}
+      },
+      "id": "update-status", "name": "Update Status",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Outreach Webhook": {"main": [[{"node": "Generate Email", "type": "main", "index": 0}]]},
+    "Generate Email": {"main": [[{"node": "Store Email", "type": "main", "index": 0}]]},
+    "Store Email": {"main": [[{"node": "Send Email", "type": "main", "index": 0}]]},
+    "Send Email": {"main": [[{"node": "Update Status", "type": "main", "index": 0}]]}
+  }
+}

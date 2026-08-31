@@ -1,0 +1,116 @@
+{
+  "name": "Workflow 2 — Business Enrichment",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leadforge/enrich",
+        "options": {}
+      },
+      "id": "enrichment-webhook",
+      "name": "Enrichment Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "leadforge-enrich"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/businesses?id=eq.{{$json.body.business_id}}",
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"}
+          ]
+        }
+      },
+      "id": "fetch-business",
+      "name": "Fetch Business",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.HERMES_API_URL}}/v1/chat/completions",
+        "headerParameters": {
+          "parameters": [
+            {"name": "Authorization", "value": "Bearer {{$env.HERMES_API_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "model", "value": "hermes-agent"},
+            {"name": "messages", "value": "=[{\"role\":\"system\",\"content\":\"You are the Hermes Research Agent. Investigate the business and return structured JSON with: what_they_do, services, customer_sentiment, complaints, competitors, differentiators, social_media, website_status, likely_owner, online_presence.\"},{\"role\":\"user\",\"content\":\"Research this business: {{$json[0].name}} in {{$json[0].category}}\"}]"}
+          ]
+        }
+      },
+      "id": "hermes-research",
+      "name": "Hermes Research Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/business_intelligence",
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "return=minimal"}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "business_id", "value": "={{$json.body.business_id}}"},
+            {"name": "summary", "value": "={{$json.choices[0].message.content}}"}
+          ]
+        }
+      },
+      "id": "store-intelligence",
+      "name": "Store AI Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend-api:3001/api/trigger-scoring",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "business_id", "value": "={{$json.body.business_id}}"}
+          ]
+        }
+      },
+      "id": "trigger-scoring",
+      "name": "Trigger Lead Scoring",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Enrichment Webhook": {
+      "main": [[{"node": "Fetch Business", "type": "main", "index": 0}]]
+    },
+    "Fetch Business": {
+      "main": [[{"node": "Hermes Research Agent", "type": "main", "index": 0}]]
+    },
+    "Hermes Research Agent": {
+      "main": [[{"node": "Store AI Analysis", "type": "main", "index": 0}]]
+    },
+    "Store AI Analysis": {
+      "main": [[{"node": "Trigger Lead Scoring", "type": "main", "index": 0}]]
+    }
+  }
+}

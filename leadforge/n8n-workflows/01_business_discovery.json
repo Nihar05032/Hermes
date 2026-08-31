@@ -1,0 +1,187 @@
+{
+  "name": "Workflow 1 — Location Business Discovery",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leadforge/search",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "leadforge-search"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.body.country}}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{$json.body.city}}",
+              "operation": "isNotEmpty"
+            },
+            {
+              "value1": "={{$json.body.category}}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "validate-input",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.BUSINESS_DATA_API_URL || 'http://backend-api:3001/api/search'}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "country", "value": "={{$json.body.country}}"},
+            {"name": "city", "value": "={{$json.body.city}}"},
+            {"name": "category", "value": "={{$json.body.category}}"},
+            {"name": "radius", "value": "={{$json.body.radius || 20}}"},
+            {"name": "min_rating", "value": "={{$json.body.min_rating || 3.5}}"},
+            {"name": "min_reviews", "value": "={{$json.body.min_reviews || 10}}"},
+            {"name": "website_filter", "value": "={{$json.body.website_filter || 'no_website'}}"}
+          ]
+        }
+      },
+      "id": "business-search-api",
+      "name": "Business Search API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "split-items",
+      "name": "Split Results",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {"name": "name", "value": "={{$json.name}}", "type": "string"},
+            {"name": "category", "value": "={{$json.category}}", "type": "string"},
+            {"name": "address", "value": "={{$json.address}}", "type": "string"},
+            {"name": "phone", "value": "={{$json.phone}}", "type": "string"},
+            {"name": "email", "value": "={{$json.email}}", "type": "string"},
+            {"name": "website_url", "value": "={{$json.website}}", "type": "string"},
+            {"name": "has_website", "value": "={{!!$json.website}}", "type": "boolean"},
+            {"name": "rating", "value": "={{$json.rating}}", "type": "number"},
+            {"name": "review_count", "value": "={{$json.review_count}}", "type": "number"},
+            {"name": "latitude", "value": "={{$json.lat}}", "type": "number"},
+            {"name": "longitude", "value": "={{$json.lng}}", "type": "number"},
+            {"name": "source", "value": "={{$json.source || 'google_places'}}", "type": "string"},
+            {"name": "external_id", "value": "={{$json.external_id}}", "type": "string"}
+          ]
+        }
+      },
+      "id": "normalize-fields",
+      "name": "Normalize Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/businesses",
+        "authentication": "headerAuth",
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "return=minimal,resolution=merge-duplicates"}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "name", "value": "={{$json.name}}"},
+            {"name": "category", "value": "={{$json.category}}"},
+            {"name": "phone", "value": "={{$json.phone}}"},
+            {"name": "email", "value": "={{$json.email}}"},
+            {"name": "website_url", "value": "={{$json.website_url}}"},
+            {"name": "has_website", "value": "={{$json.has_website}}"},
+            {"name": "rating", "value": "={{$json.rating}}"},
+            {"name": "review_count", "value": "={{$json.review_count}}"},
+            {"name": "source", "value": "={{$json.source}}"},
+            {"name": "external_id", "value": "={{$json.external_id}}"}
+          ]
+        }
+      },
+      "id": "supabase-insert",
+      "name": "Supabase Insert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend-api:3001/api/trigger-enrichment",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "business_id", "value": "={{$json.id || $json.external_id}}"}
+          ]
+        }
+      },
+      "id": "trigger-enrichment",
+      "name": "Trigger Enrichment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{"node": "Validate Input", "type": "main", "index": 0}]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [{"node": "Business Search API", "type": "main", "index": 0}]
+      ]
+    },
+    "Business Search API": {
+      "main": [
+        [{"node": "Split Results", "type": "main", "index": 0}]
+      ]
+    },
+    "Split Results": {
+      "main": [
+        [{"node": "Normalize Fields", "type": "main", "index": 0}]
+      ]
+    },
+    "Normalize Fields": {
+      "main": [
+        [{"node": "Supabase Insert", "type": "main", "index": 0}]
+      ]
+    },
+    "Supabase Insert": {
+      "main": [
+        [{"node": "Trigger Enrichment", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}

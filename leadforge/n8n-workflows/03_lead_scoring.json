@@ -1,0 +1,77 @@
+{
+  "name": "Workflow 3 — Lead Scoring & Website Generation",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {"path": "leadforge/score", "options": {}},
+      "id": "score-webhook", "name": "Scoring Webhook",
+      "type": "n8n-nodes-base.webhook", "typeVersion": 1,
+      "position": [250, 300], "webhookId": "leadforge-score"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.HERMES_API_URL}}/v1/chat/completions",
+        "headerParameters": {"parameters": [
+          {"name": "Authorization", "value": "Bearer {{$env.HERMES_API_KEY}}"},
+          {"name": "Content-Type", "value": "application/json"}
+        ]},
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "model", "value": "hermes-agent"},
+          {"name": "messages", "value": "=[{\"role\":\"system\",\"content\":\"You are the Lead Scoring Agent. Score 0-100 based on: website_opportunity (no website=high), reputation, digital_presence, contactability, business_value. Return JSON: {lead_score, website_opportunity_score, reputation_score, digital_presence_score, contactability_score, estimated_business_value, reasoning}\"},{\"role\":\"user\",\"content\":\"Score this business\"}]"}
+        ]}
+      },
+      "id": "hermes-scoring", "name": "Hermes Lead Scoring",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {"number": [
+          {"value1": "={{JSON.parse($json.choices[0].message.content).lead_score}}", "operation": "larger", "value2": 75}
+        ]}
+      },
+      "id": "check-qualified", "name": "Lead Score > 75?",
+      "type": "n8n-nodes-base.if", "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend-api:3001/api/generate-website",
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "business_id", "value": "={{$json.body.business_id}}"}
+        ]}
+      },
+      "id": "generate-website", "name": "Generate Website",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend-api:3001/api/update-lead-status",
+        "sendBody": true,
+        "bodyParameters": {"parameters": [
+          {"name": "business_id", "value": "={{$json.body.business_id}}"},
+          {"name": "status", "value": "QUALIFIED"}
+        ]}
+      },
+      "id": "mark-qualified", "name": "Mark as Qualified",
+      "type": "n8n-nodes-base.httpRequest", "typeVersion": 3,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Scoring Webhook": {"main": [[{"node": "Hermes Lead Scoring", "type": "main", "index": 0}]]},
+    "Hermes Lead Scoring": {"main": [[{"node": "Lead Score > 75?", "type": "main", "index": 0}]]},
+    "Lead Score > 75?": {
+      "main": [
+        [{"node": "Generate Website", "type": "main", "index": 0}],
+        [{"node": "Mark as Qualified", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}
