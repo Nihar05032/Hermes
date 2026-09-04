@@ -1,0 +1,108 @@
+{
+  "name": "LeadForge — Send Outreach Emails",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leadforge/send-emails",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "leadforge-send"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/emails?select=*&status=eq.QUEUED",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"}
+          ]
+        }
+      },
+      "id": "fetch-emails",
+      "name": "Fetch Queued Emails",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "split-emails",
+      "name": "Split Emails",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "Authorization", "value": "Bearer {{$env.EMAIL_API_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"{{$env.EMAIL_FROM}}\",\n  \"to\": \"{{$json.contact_email}}\",\n  \"subject\": \"{{$json.subject}}\",\n  \"html\": \"{{$json.message}}\"\n}"
+      },
+      "id": "send-email",
+      "name": "Send via Resend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/emails?id=eq.{{$json[\"id\"]}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"SENT\",\n  \"sent_at\": \"{{ new Date().toISOString() }}\"\n}"
+      },
+      "id": "update-status",
+      "name": "Update Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\": \"emails_sent\", \"count\": {{$json[\"id\"]}}}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    }
+  ],
+  "connections": {
+    "Trigger": {"main": [[{"node": "Fetch Queued Emails", "type": "main", "index": 0}]]},
+    "Fetch Queued Emails": {"main": [[{"node": "Split Emails", "type": "main", "index": 0}]]},
+    "Split Emails": {"main": [[{"node": "Send via Resend", "type": "main", "index": 0}]]},
+    "Send via Resend": {"main": [[{"node": "Update Status", "type": "main", "index": 0}]]},
+    "Update Status": {"main": [[{"node": "Respond", "type": "main", "index": 0}]]}
+  }
+}

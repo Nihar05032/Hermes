@@ -1,0 +1,101 @@
+{
+  "name": "LeadForge — View Pipeline Stats",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "leadforge/stats",
+        "options": {}
+      },
+      "id": "webhook-stats",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "leadforge-stats"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/businesses?select=id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"}
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "count-businesses",
+      "name": "Count Businesses",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/leads?select=id&status=eq.QUALIFIED",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"}
+          ]
+        }
+      },
+      "id": "count-qualified",
+      "name": "Count Qualified",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/generated_websites?select=id&status=eq.DEPLOYED",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{$env.SUPABASE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{$env.SUPABASE_KEY}}"}
+          ]
+        }
+      },
+      "id": "count-websites",
+      "name": "Count Websites",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"total_businesses\": {{$json.length}},\n  \"message\": \"Check Supabase dashboard for full stats\"\n}"
+      },
+      "id": "respond-stats",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [{"node": "Count Businesses", "type": "main", "index": 0}],
+        [{"node": "Count Qualified", "type": "main", "index": 0}]
+      ]
+    },
+    "Count Businesses": {"main": [[{"node": "Count Websites", "type": "main", "index": 0}]]},
+    "Count Qualified": {"main": [[{"node": "Count Websites", "type": "main", "index": 0}]]},
+    "Count Websites": {"main": [[{"node": "Respond", "type": "main", "index": 0}]]}
+  }
+}
