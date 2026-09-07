@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waghela Enterprises — Waterproofing Experts in Mumbai</title>
+<meta name="description" content="Professional waterproofing solutions in Mumbai. 5.0★ rated, 26+ reviews. Terrace, bathroom, basement waterproofing. Call 093207 70271.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0a14;--card:#181425;--text:#f0f0f5;--muted:#8b8ba0;--purple:#a855f7;--purple-light:#c084fc;--purple-glow:rgba(168,85,247,0.12);--border:rgba(255,255,255,0.06);--radius:20px}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+nav{position:fixed;top:0;width:100%;padding:20px 48px;display:flex;justify-content:space-between;align-items:center;z-index:100;transition:all .3s}
+nav.scrolled{background:rgba(13,10,20,0.85);backdrop-filter:blur(15px);border-bottom:1px solid var(--border);padding:14px 48px}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.5px}
+.logo span{color:var(--purple)}
+.nav-links{display:flex;gap:30px;list-style:none}
+.nav-links a{color:var(--muted);font-size:.9rem;transition:color .3s;font-weight:500}
+.nav-links a:hover{color:var(--purple)}
+.nav-cta{padding:10px 22px;border:1px solid var(--purple);border-radius:30px;color:var(--purple);font-weight:600;font-size:.85rem;transition:all .3s}
+.nav-cta:hover{background:var(--purple);color:#fff}
+
+/* Hero - Asymmetric with grid pattern */
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 48px;position:relative;overflow:hidden}
+.hero-grid-bg{position:absolute;inset:0;z-index:0;opacity:.3;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 70%)}
+.hero-glow{position:absolute;top:20%;right:10%;width:500px;height:500px;background:radial-gradient(circle,var(--purple-glow),transparent 60%);z-index:0;animation:float 8s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,20px)}}
+.hero-content{position:relative;z-index:1;max-width:750px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15);border-radius:30px;font-size:.8rem;color:var(--purple);margin-bottom:24px}
+.hero-badge .dot{width:6px;height:6px;background:var(--purple);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:800;line-height:1;letter-spacing:-2px;margin-bottom:24px}
+.hero h1 .glitch{color:var(--purple);position:relative}
+.hero p{font-size:1.2rem;color:var(--muted);line-height:1.6;margin-bottom:36px;max-width:500px}
+.btn{padding:15px 34px;border-radius:30px;font-weight:600;font-size:.95rem;transition:all .3s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer}
+.btn-fill{background:var(--purple);color:#fff}
+.btn-fill:hover{background:var(--purple-light);transform:translateY(-2px);box-shadow:0 8px 30px var(--purple-glow)}
+.btn-out{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-out:hover{border-color:var(--purple);color:var(--purple)}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Stats - Inline pills */
+.hero-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:40px}
+.pill{display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:30px}
+.pill .v{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--purple)}
+.pill .l{font-size:.8rem;color:var(--muted)}
+
+/* Marquee */
+.marquee{padding:16px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;white-space:nowrap}
+.marquee-content{display:inline-flex;gap:40px;animation:scroll 30s linear infinite}
+.marquee-content span{font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--muted);font-weight:600}
+.marquee-content span b{color:var(--purple)}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* Services - Masonry style */
+.section{padding:100px 48px;max-width:1100px;margin:0 auto}
+.sec-head{margin-bottom:50px}
+.sec-tag{font-size:.75rem;color:var(--purple);font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-1px}
+.sec-title .purple{color:var(--purple)}
+.sec-desc{color:var(--muted);font-size:1.05rem;margin-top:12px;max-width:500px}
+
+.services-masonry{columns:3;column-gap:16px}
+.svc-item{break-inside:avoid;margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .3s}
+.svc-item:hover{border-color:rgba(168,85,247,0.3);transform:translateY(-3px)}
+.svc-item .icon{font-size:2rem;margin-bottom:14px;display:block}
+.svc-item h3{font-size:1.1rem;font-weight:600;margin-bottom:8px}
+.svc-item p{color:var(--muted);font-size:.85rem;line-height:1.5}
+.svc-item .tag{display:inline-block;margin-top:12px;padding:4px 10px;background:rgba(168,85,247,0.08);border-radius:20px;font-size:.7rem;color:var(--purple)}
+
+/* Process - Connected dots */
+.process-section{background:var(--card);padding:100px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.process-inner{max-width:900px;margin:0 auto;padding:0 48px}
+.process-line{position:relative;margin-top:50px;padding-left:40px}
+.process-line::before{content:'';position:absolute;left:19px;top:10px;bottom:10px;width:2px;background:linear-gradient(180deg,var(--purple),transparent)}
+.pstep{position:relative;margin-bottom:36px}
+.pstep::before{content:'';position:absolute;left:-30px;top:8px;width:20px;height:20px;border-radius:50%;background:var(--purple);border:3px solid var(--bg);z-index:1}
+.pstep h3{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+.pstep p{color:var(--muted);font-size:.9rem;line-height:1.5}
+
+/* Reviews */
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.review{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .3s}
+.review:hover{border-color:rgba(168,85,247,0.2);transform:translateY(-3px)}
+.review .stars{color:var(--purple);margin-bottom:12px;font-size:1rem}
+.review p{font-size:.9rem;line-height:1.6;margin-bottom:16px;color:#ccc}
+.review .who{display:flex;align-items:center;gap:10px}
+.review .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-light));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#fff}
+.review .name{font-size:.85rem;font-weight:600}
+.review .date{font-size:.75rem;color:var(--muted)}
+
+/* CTA */
+.cta{padding:100px 48px;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,var(--purple-glow),transparent 60%)}
+.cta-grid-bg{position:absolute;inset:0;opacity:.15;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 60%)}
+.cta-inner{position:relative;z-index:1;max-width:600px;margin:0 auto}
+.cta h2{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:800;margin-bottom:16px;letter-spacing:-1px}
+.cta h2 .purple{color:var(--purple)}
+.cta p{color:var(--muted);font-size:1.1rem;margin-bottom:30px}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:800px;margin:40px auto 0}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 16px;text-align:center;transition:all .3s}
+.info-card:hover{border-color:var(--purple);transform:translateY(-3px)}
+.info-card .ic{font-size:1.5rem;margin-bottom:8px}
+.info-card .lb{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.info-card .vl{font-size:.9rem;font-weight:600}
+.info-card .vl a{color:var(--purple)}
+
+footer{border-top:1px solid var(--border);padding:30px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer p{font-size:.8rem;color:var(--muted)}
+
+@media(max-width:768px){
+nav{padding:14px 20px}.nav-links{display:none}
+.services-masonry{columns:1}.reviews-grid{grid-template-columns:1fr}
+.info-grid{grid-template-columns:repeat(2,1fr)}.section{padding:60px 20px}
+}
+</style>
+</head>
+<body>
+<nav id="nav">
+<div class="logo">Waghela<span>.</span></div>
+<ul class="nav-links"><li><a href="#services">Services</a></li><li><a href="#process">Process</a></li><li><a href="#reviews">Reviews</a></li></ul>
+<a href="#contact" class="nav-cta">Get Inspection</a>
+</nav>
+
+<section class="hero">
+<div class="hero-grid-bg"></div>
+<div class="hero-glow"></div>
+<div class="hero-content">
+<div class="hero-badge"><span class="dot"></span>Monsoon Ready — Mumbai</div>
+<h1>Stop Leaks <span class="glitch">Permanently</span><br>Guaranteed</h1>
+<p>Professional waterproofing for terraces, bathrooms, and basements. 5.0 stars across 26+ verified reviews. Monsoon-ready protection.</p>
+<div class="hero-cta">
+<a href="#contact" class="btn btn-fill">Get Free Inspection →</a>
+<a href="#services" class="btn btn-out">View Services</a>
+</div>
+<div class="hero-stats">
+<div class="pill"><span class="v">5.0★</span><span class="l">Rating</span></div>
+<div class="pill"><span class="v">26+</span><span class="l">Reviews</span></div>
+<div class="pill"><span class="v">100%</span><span class="l">Leak-Free</span></div>
+<div class="pill"><span class="v">24/7</span><span class="l">Support</span></div>
+</div>
+</div>
+</section>
+
+<div class="marquee"><div class="marquee-content">
+<span>Terrace <b>Waterproofing</b></span><span>Bathroom <b>Sealing</b></span><span>Basement <b>Protection</b></span><span>Leak <b>Detection</b></span><span>Wall <b>Waterproofing</b></span>
+<span>Terrace <b>Waterproofing</b></span><span>Bathroom <b>Sealing</b></span><span>Basement <b>Protection</b></span><span>Leak <b>Detection</b></span><span>Wall <b>Waterproofing</b></span>
+</div></div>
+
+<section class="section" id="services">
+<div class="sec-head">
+<div class="sec-tag">What We Do</div>
+<h2 class="sec-title">Complete <span class="purple">Waterproofing</span> Solutions</h2>
+<p class="sec-desc">Permanent solutions for all types of water seepage and leakage — guaranteed results.</p>
+</div>
+<div class="services-masonry">
+<div class="svc-item"><div class="icon">🏠</div><h3>Terrace Waterproofing</h3><p>Protect your rooftop from monsoon damage with advanced waterproofing treatments.</p><span class="tag">Most Popular</span></div>
+<div class="svc-item"><div class="icon">🚿</div><h3>Bathroom Waterproofing</h3><p>Seal bathroom floors and walls to prevent seepage to lower floors.</p></div>
+<div class="svc-item"><div class="icon">🏗️</div><h3>Basement Waterproofing</h3><p>Keep underground spaces dry with professional sealing solutions.</p></div>
+<div class="svc-item"><div class="icon">💧</div><h3>Leak Detection</h3><p>Advanced leak detection to find and fix hidden water seepage.</p><span class="tag">Free with Inspection</span></div>
+<div class="svc-item"><div class="icon">🧱</div><h3>Wall Waterproofing</h3><p>Prevent dampness and paint peeling with exterior wall sealing.</p></div>
+<div class="svc-item"><div class="icon">🔧</div><h3>Crack Repair</h3><p>Seal structural cracks and prevent water ingress permanently.</p></div>
+</div>
+</section>
+
+<section class="process-section" id="process">
+<div class="process-inner">
+<div class="sec-head">
+<div class="sec-tag">How It Works</div>
+<h2 class="sec-title">Our <span class="purple">Process</span></h2>
+</div>
+<div class="process-line">
+<div class="pstep"><h3>Call Us</h3><p>Call 093207 70271 for a free inspection. We'll schedule a visit at your convenience.</p></div>
+<div class="pstep"><h3>Free Inspection</h3><p>We assess the problem, identify the source, and recommend the best solution.</p></div>
+<div class="pstep"><h3>Expert Treatment</h3><p>Premium waterproofing materials applied by trained professionals.</p></div>
+<div class="pstep"><h3>Guaranteed Results</h3><p>If it leaks again, we fix it free — that's our leak-free guarantee.</p></div>
+</div>
+</div>
+</section>
+
+<section class="section" id="reviews">
+<div class="sec-head">
+<div class="sec-tag">Testimonials</div>
+<h2 class="sec-title">What Customers <span class="purple">Say</span></h2>
+<p class="sec-desc">26+ verified Google reviews — all 5 stars.</p>
+</div>
+<div class="reviews-grid">
+<div class="review"><div class="stars">★★★★★</div><p>"Excellent waterproofing service! No more leaks in my terrace. Very professional team."</p><div class="who"><div class="avatar">V</div><div><div class="name">Verified Review</div><div class="date">2 months ago</div></div></div></div>
+<div class="review"><div class="stars">★★★★★</div><p>"Best waterproofing in Mumbai. Fair pricing and quality work. Highly recommend!"</p><div class="who"><div class="avatar">R</div><div><div class="name">Verified Review</div><div class="date">3 months ago</div></div></div></div>
+<div class="review"><div class="stars">★★★★★</div><p>"Professional team, quality materials. My home is monsoon-ready now."</p><div class="who"><div class="avatar">S</div><div><div class="name">Verified Review</div><div class="date">1 month ago</div></div></div></div>
+</div>
+</section>
+
+<section class="cta" id="contact">
+<div class="cta-grid-bg"></div>
+<div class="cta-inner">
+<h2>Stop Leaks <span class="purple">Today!</span></h2>
+<p>Free inspection, fair pricing, guaranteed results. Get monsoon-ready now.</p>
+<div class="cta-btns">
+<a href="tel:09320770271" class="btn btn-fill">📞 Call 093207 70271</a>
+<a href="https://wa.me/919320770271" class="btn btn-out">💬 WhatsApp Us</a>
+</div>
+</div>
+<div class="info-grid">
+<div class="info-card"><div class="ic">📞</div><div class="lb">Phone</div><div class="vl"><a href="tel:09320770271">093207 70271</a></div></div>
+<div class="info-card"><div class="ic">📍</div><div class="lb">Location</div><div class="vl">Mumbai, Maharashtra</div></div>
+<div class="info-card"><div class="ic">✉️</div><div class="lb">Email</div><div class="vl"><a href="mailto:waghelaenterprises@gmail.com">Email Us</a></div></div>
+<div class="info-card"><div class="ic">✅</div><div class="lb">Guarantee</div><div class="vl">Leak-Free Promise</div></div>
+</div>
+</section>
+
+<footer><div class="logo">Waghela<span>.</span></div><p>© 2026 Waghela Enterprises — Waterproofing Experts in Mumbai</p></footer>
+
+<script>
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',scrollY>60)});
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'})}));
+</script>
+</body>
+</html>
