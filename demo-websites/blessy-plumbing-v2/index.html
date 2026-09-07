@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blessy Enterprises — Trusted Plumbing in Mumbai</title>
+    <meta name="description" content="Expert plumbing services in Mumbai. 5.0★ rated, 43+ reviews. Emergency repairs, installation. Call 091674 61922.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        :root {{
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-2: #1a1a1a;
+            --text: #fafafa;
+            --text-muted: #a3a3a3;
+            --accent: #059669;
+            --accent-dark: #047857;
+            --accent-glow: rgba(5, 150, 105, 0.15);
+            --border: rgba(255, 255, 255, 0.08);
+            --radius: 20px;
+            --transition: cubic-bezier(0.16, 1, 0.3, 1);
+        }}
+        html {{ scroll-behavior: smooth; }}
+        body {{ font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }}
+        a {{ color: inherit; text-decoration: none; }}
+        .cursor {{ position: fixed; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: difference; transition: transform 0.1s; }}
+        .cursor-ring {{ position: fixed; width: 36px; height: 36px; border: 1.5px solid var(--accent); border-radius: 50%; pointer-events: none; z-index: 9998; transition: transform 0.3s var(--transition); }}
+        .progress {{ position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-dark)); z-index: 10000; width: 0%; transition: width 0.1s; }}
+        nav {{ position: fixed; top: 0; width: 100%; padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 100; transition: all 0.4s var(--transition); }}
+        nav.scrolled {{ padding: 16px 48px; background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }}
+        .logo {{ font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }}
+        .logo span {{ color: var(--accent); }}
+        .nav-links {{ display: flex; gap: 40px; list-style: none; }}
+        .nav-links a {{ font-size: 0.875rem; color: var(--text-muted); font-weight: 500; transition: color 0.3s; position: relative; }}
+        .nav-links a::after {{ content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s var(--transition); }}
+        .nav-links a:hover {{ color: var(--text); }}
+        .nav-links a:hover::after {{ width: 100%; }}
+        .nav-cta {{ padding: 10px 24px; border: 1px solid var(--accent); border-radius: 100px; color: var(--accent); font-size: 0.875rem; font-weight: 600; transition: all 0.3s; }}
+        .nav-cta:hover {{ background: var(--accent); color: var(--bg); }}
+        .hero {{ min-height: 100vh; display: flex; align-items: center; padding: 0 48px; position: relative; overflow: hidden; }}
+        .hero-bg {{ position: absolute; inset: 0; z-index: 0; }}
+        .hero-bg::before {{ content: ''; position: absolute; top: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, var(--accent-glow), transparent 70%); animation: float 8s ease-in-out infinite; }}
+        .hero-bg::after {{ content: ''; position: absolute; bottom: -30%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, var(--accent-glow), transparent 70%); animation: float 10s ease-in-out infinite reverse; }}
+        @keyframes float {{ 0%, 100% {{ transform: translate(0, 0); }} 50% {{ transform: translate(30px, -30px); }} }}
+        .hero-content {{ position: relative; z-index: 1; max-width: 800px; }}
+        .hero-badge {{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 100px; font-size: 0.8rem; color: var(--accent); font-weight: 500; margin-bottom: 32px; animation: fadeUp 0.8s var(--transition); }}
+        .hero-badge .dot {{ width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }}
+        @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.3; }} }}
+        .hero h1 {{ font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin-bottom: 24px; animation: fadeUp 1s var(--transition) 0.1s both; }}
+        .hero h1 .italic {{ font-style: italic; font-weight: 400; color: var(--accent); }}
+        .hero p {{ font-size: 1.25rem; color: var(--text-muted); line-height: 1.6; max-width: 560px; margin-bottom: 40px; animation: fadeUp 1s var(--transition) 0.2s both; }}
+        @keyframes fadeUp {{ from {{ opacity: 0; transform: translateY(40px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+        .hero-cta {{ display: flex; gap: 16px; flex-wrap: wrap; animation: fadeUp 1s var(--transition) 0.3s both; }}
+        .btn {{ padding: 16px 36px; border-radius: 100px; font-size: 0.95rem; font-weight: 600; transition: all 0.3s var(--transition); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none; }}
+        .btn-primary {{ background: var(--accent); color: var(--bg); }}
+        .btn-primary:hover {{ background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-glow); }}
+        .btn-secondary {{ background: transparent; color: var(--text); border: 1px solid var(--border); }}
+        .btn-secondary:hover {{ border-color: var(--accent); color: var(--accent); }}
+        .hero-stats {{ position: absolute; bottom: 48px; left: 48px; right: 48px; display: flex; gap: 60px; z-index: 1; animation: fadeUp 1s var(--transition) 0.5s both; }}
+        .stat {{ display: flex; flex-direction: column; gap: 4px; }}
+        .stat .num {{ font-size: 2rem; font-weight: 800; color: var(--text); }}
+        .stat .label {{ font-size: 0.8rem; color: var(--text-muted); }}
+        .marquee {{ padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; white-space: nowrap; }}
+        .marquee-track {{ display: inline-flex; gap: 60px; animation: scroll 30s linear infinite; }}
+        .marquee-item {{ font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--text-muted); font-style: italic; }}
+        .marquee-item span {{ color: var(--accent); }}
+        @keyframes scroll {{ to {{ transform: translateX(-50%); }} }}
+        .section {{ padding: 120px 48px; max-width: 1200px; margin: 0 auto; }}
+        .section-label {{ font-size: 0.75rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }}
+        .section-title {{ font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }}
+        .section-title .italic {{ font-style: italic; color: var(--accent); }}
+        .section-desc {{ font-size: 1.1rem; color: var(--text-muted); max-width: 500px; margin-bottom: 60px; line-height: 1.6; }}
+        .services-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }}
+        .service-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 32px; transition: all 0.4s var(--transition); position: relative; overflow: hidden; }}
+        .service-card::before {{ content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top right, var(--accent-glow), transparent 50%); opacity: 0; transition: opacity 0.4s; }}
+        .service-card:hover {{ transform: translateY(-6px); border-color: var(--accent); }}
+        .service-card:hover::before {{ opacity: 1; }}
+        .service-num {{ font-size: 0.75rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }}
+        .service-icon {{ font-size: 2.5rem; margin-bottom: 24px; display: block; }}
+        .service-card h3 {{ font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }}
+        .service-card p {{ color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }}
+        .process-section {{ background: var(--surface); padding: 120px 0; }}
+        .process-inner {{ max-width: 1200px; margin: 0 auto; padding: 0 48px; }}
+        .process-steps {{ display: flex; gap: 0; margin-top: 60px; position: relative; }}
+        .process-steps::before {{ content: ''; position: absolute; top: 30px; left: 0; right: 0; height: 1px; background: var(--border); }}
+        .process-step {{ flex: 1; position: relative; padding-right: 24px; }}
+        .process-dot {{ width: 60px; height: 60px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 24px; position: relative; z-index: 1; transition: all 0.3s; }}
+        .process-step:hover .process-dot {{ background: var(--accent); color: var(--bg); transform: scale(1.1); }}
+        .process-step h3 {{ font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }}
+        .process-step p {{ color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }}
+        .gallery {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 60px; }}
+        .gallery-item {{ aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative; cursor: pointer; }}
+        .gallery-item::before {{ content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); opacity: 0.8; transition: opacity 0.3s; }}
+        .gallery-item::after {{ content: attr(data-label); position: absolute; bottom: 16px; left: 16px; font-size: 0.85rem; font-weight: 600; color: white; z-index: 1; }}
+        .gallery-item:hover::before {{ opacity: 0.6; }}
+        .gallery-item .pattern {{ position: absolute; inset: 0; opacity: 0.3; background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px); }}
+        .gallery-item.large {{ grid-column: span 2; grid-row: span 2; }}
+        .reviews-section {{ padding: 120px 48px; max-width: 1200px; margin: 0 auto; }}
+        .review-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }}
+        .review-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; transition: all 0.3s; }}
+        .review-card:hover {{ border-color: var(--accent); transform: translateY(-4px); }}
+        .review-stars {{ display: flex; gap: 2px; margin-bottom: 20px; }}
+        .review-stars span {{ color: var(--accent); font-size: 1.1rem; }}
+        .review-text {{ font-size: 0.95rem; line-height: 1.7; color: var(--text); margin-bottom: 24px; }}
+        .review-author {{ display: flex; align-items: center; gap: 12px; }}
+        .review-avatar {{ width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: var(--bg); }}
+        .review-name {{ font-size: 0.875rem; font-weight: 600; }}
+        .review-date {{ font-size: 0.75rem; color: var(--text-muted); }}
+        .cta-section {{ padding: 120px 48px; text-align: center; position: relative; overflow: hidden; }}
+        .cta-section::before {{ content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 800px; background: radial-gradient(circle, var(--accent-glow), transparent 60%); }}
+        .cta-content {{ position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }}
+        .cta-content h2 {{ font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; margin-bottom: 24px; }}
+        .cta-content h2 .italic {{ font-style: italic; color: var(--accent); }}
+        .cta-content p {{ font-size: 1.15rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6; }}
+        .cta-buttons {{ display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }}
+        .contact-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1000px; margin: 60px auto 0; }}
+        .contact-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; text-align: center; transition: all 0.3s; }}
+        .contact-card:hover {{ border-color: var(--accent); transform: translateY(-4px); }}
+        .contact-card .icon {{ font-size: 1.8rem; margin-bottom: 12px; }}
+        .contact-card .label {{ font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
+        .contact-card .value {{ font-size: 0.95rem; font-weight: 600; }}
+        .contact-card .value a {{ color: var(--accent); }}
+        footer {{ border-top: 1px solid var(--border); padding: 40px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }}
+        footer .logo {{ font-size: 1.2rem; }}
+        footer p {{ font-size: 0.8rem; color: var(--text-muted); }}
+        .reveal {{ opacity: 0; transform: translateY(40px); transition: all 0.8s var(--transition); }}
+        .reveal.visible {{ opacity: 1; transform: translateY(0); }}
+        @media (max-width: 768px) {{
+            nav {{ padding: 16px 24px; }} .nav-links {{ display: none; }}
+            .hero {{ padding: 0 24px; }} .hero-stats {{ position: static; padding: 40px 24px; flex-wrap: wrap; gap: 30px; }}
+            .section {{ padding: 80px 24px; }} .services-grid, .review-grid {{ grid-template-columns: 1fr; }}
+            .gallery {{ grid-template-columns: repeat(2, 1fr); }} .gallery-item.large {{ grid-column: span 2; }}
+            .process-steps {{ flex-direction: column; gap: 40px; }} .process-steps::before {{ display: none; }}
+            .contact-grid {{ grid-template-columns: repeat(2, 1fr); }} .cursor, .cursor-ring {{ display: none; }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="progress" id="progress"></div>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+    <nav id="nav">
+        <div class="logo">Blessy<span>.</span></div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+        </ul>
+        <a href="#contact" class="nav-cta">Get a Quote</a>
+    </nav>
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="dot"></span>Trusted Service — Mumbai</div>
+            <h1>Plumbing Done <span class="italic">Right</span><br>Every Single Time</h1>
+            <p>Expert plumbing repairs, installation, and maintenance by Mumbai's most trusted plumber. 5.0 stars across 43+ verified reviews.</p>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">Get a Free Quote →</a>
+                <a href="#work" class="btn btn-secondary">View Our Work</a>
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><div class="num" data-count="5.0" data-suffix="★">0</div><div class="label">Google Rating</div></div><div class="stat"><div class="num" data-count="43" data-suffix="+">0</div><div class="label">Happy Customers</div></div><div class="stat"><div class="num" data-count="7" data-suffix=" days">0</div><div class="label">Available</div></div><div class="stat"><div class="num" data-count="100" data-suffix="%">0</div><div class="label">Work Guaranteed</div></div>
+        </div>
+    </section>
+    <div class="marquee"><div class="marquee-track"><span class="marquee-item">Leak <span>Repairs</span></span><span class="marquee-item">Bathroom <span>Plumbing</span></span><span class="marquee-item">Pipe <span>Fitting</span></span><span class="marquee-item">Home <span>Plumbing</span></span><span class="marquee-item">Water <span>Solutions</span></span><span class="marquee-item">Leak <span>Repairs</span></span><span class="marquee-item">Bathroom <span>Plumbing</span></span><span class="marquee-item">Pipe <span>Fitting</span></span><span class="marquee-item">Home <span>Plumbing</span></span><span class="marquee-item">Water <span>Solutions</span></span></div></div>
+    <section class="section" id="services">
+        <div class="reveal"><div class="section-label">What We Do</div><h2 class="section-title">Expert <span class="italic">Plumbing</span> Services</h2><p class="section-desc">Complete plumbing solutions for homes and businesses — quality work, every time.</p></div>
+        <div class="services-grid"><div class="service-card reveal"><div class="service-num">01</div><span class="service-icon">🚿</span><h3>Leak Repairs</h3><p>Fast and reliable leak detection and repair for all pipe types.</p></div><div class="service-card reveal"><div class="service-num">02</div><span class="service-icon">🚽</span><h3>Bathroom Plumbing</h3><p>Complete bathroom plumbing installation, repair, and maintenance.</p></div><div class="service-card reveal"><div class="service-num">03</div><span class="service-icon">🔧</span><h3>Pipe Fitting</h3><p>Professional pipe installation, replacement, and rerouting.</p></div><div class="service-card reveal"><div class="service-num">04</div><span class="service-icon">🏠</span><h3>Home Plumbing</h3><p>Full home plumbing for new construction and renovations.</p></div><div class="service-card reveal"><div class="service-num">05</div><span class="service-icon">💧</span><h3>Water Solutions</h3><p>Water tank, motor, and pressure solutions for your building.</p></div><div class="service-card reveal"><div class="service-num">06</div><span class="service-icon">⚡</span><h3>Emergency Service</h3><p>Urgent plumbing issues? We respond quickly to minimize damage.</p></div></div>
+    </section>
+    <section class="process-section" id="process">
+        <div class="process-inner">
+            <div class="reveal"><div class="section-label">How It Works</div><h2 class="section-title">Simple <span class="italic">Process</span>, Exceptional Results</h2></div>
+            <div class="process-steps"><div class="process-step reveal"><div class="process-dot">1</div><h3>Call Us</h3><p>Call 091674 61922 — we respond quickly.</p></div><div class="process-step reveal"><div class="process-dot">2</div><h3>Free Quote</h3><p>Fair, transparent pricing before any work starts.</p></div><div class="process-step reveal"><div class="process-dot">3</div><h3>Expert Work</h3><p>Quality plumbing done right the first time.</p></div><div class="process-step reveal"><div class="process-dot">4</div><h3>Satisfaction</h3><p>We ensure you're 100% happy with the results.</p></div></div>
+        </div>
+    </section>
+    <section class="section" id="work">
+        <div class="reveal"><div class="section-label">Our Work</div><h2 class="section-title">Craftsmanship <span class="italic">Gallery</span></h2><p class="section-desc">A glimpse of the quality and attention to detail in every project we undertake.</p></div>
+        <div class="gallery"><div class="gallery-item large reveal" data-label="Pipe Repair"><div class="pattern"></div></div><div class="gallery-item  reveal" data-label="Bathroom Fix"><div class="pattern"></div></div><div class="gallery-item  reveal" data-label="Water Tank"><div class="pattern"></div></div><div class="gallery-item  reveal" data-label="Leak Detection"><div class="pattern"></div></div><div class="gallery-item  reveal" data-label="Tap Install"><div class="pattern"></div></div><div class="gallery-item  reveal" data-label="Drain Clear"><div class="pattern"></div></div><div class="gallery-item  reveal" data-label="Motor Setup"><div class="pattern"></div></div></div>
+    </section>
+    <section class="reviews-section" id="reviews">
+        <div class="reveal"><div class="section-label">Testimonials</div><h2 class="section-title">What Customers <span class="italic">Say</span></h2><p class="section-desc">43+ verified Google reviews — all 5 stars.</p></div>
+        <div class="review-grid"><div class="review-card reveal"><div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div><p class="review-text">"Excellent service! Very professional and the work was done perfectly."</p><div class="review-author"><div class="review-avatar">V</div><div><div class="review-name">Verified Review</div><div class="review-date">3 months ago</div></div></div></div><div class="review-card reveal"><div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div><p class="review-text">"Very reliable plumber. Came on time, fixed the issue quickly. Fair pricing."</p><div class="review-author"><div class="review-avatar">S</div><div><div class="review-name">Verified Review</div><div class="review-date">1 month ago</div></div></div></div><div class="review-card reveal"><div class="review-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div><p class="review-text">"Best plumbing service in Mumbai. Highly recommend Blessy Enterprises."</p><div class="review-author"><div class="review-avatar">P</div><div><div class="review-name">Verified Review</div><div class="review-date">4 months ago</div></div></div></div></div>
+    </section>
+    <section class="cta-section" id="contact">
+        <div class="cta-content reveal">
+            <h2>Need a Plumber? <span class="italic">Call Now!</span></h2>
+            <p>Fast response, fair pricing, quality work — every time.</p>
+            <div class="cta-buttons">
+                <a href="tel:09167461922" class="btn btn-primary">📞 Call 091674 61922</a>
+                <a href="https://wa.me/919167461922" class="btn btn-secondary">💬 WhatsApp Us</a>
+            </div>
+        </div>
+        <div class="contact-grid reveal"><div class="contact-card"><div class="icon">📞</div><div class="label">Phone</div><div class="value"><a href="tel:09167461922">091674 61922</a></div></div><div class="contact-card"><div class="icon">📍</div><div class="label">Location</div><div class="value">Mumbai, Maharashtra</div></div><div class="contact-card"><div class="icon">🕒</div><div class="label">Hours</div><div class="value">Available 7 Days</div></div><div class="contact-card"><div class="icon">✅</div><div class="label">Guarantee</div><div class="value">100% Guaranteed</div></div></div>
+    </section>
+    <footer><div class="logo">Blessy<span>.</span></div><p>© 2026 Blessy Enterprises — Trusted Plumbing in Mumbai</p></footer>
+    <script>
+        const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+        document.addEventListener('mousemove',e=>{{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';ring.style.left=(e.clientX-18)+'px';ring.style.top=(e.clientY-18)+'px';}});
+        window.addEventListener('scroll',()=>{{const s=(window.scrollY/document.documentElement.scrollHeight)*100;document.getElementById('progress').style.width=s+'%';document.getElementById('nav').classList.toggle('scrolled',window.scrollY>80);}});
+        const co=new IntersectionObserver(e=>{{e.forEach(en=>{{if(en.isIntersecting){{const el=en.target,t=parseFloat(el.dataset.count),s=el.dataset.suffix||'',f=t%1!==0;let c=0,st=t/40,timer=setInterval(()=>{{c+=st;if(c>=t){{c=t;clearInterval(timer);}}el.textContent=(f?c.toFixed(1):Math.floor(c))+s;}},25);co.unobserve(el);}}}})});}});document.querySelectorAll('.stat .num').forEach(el=>co.observe(el));
+        const ro=new IntersectionObserver(e=>{{e.forEach((en,i)=>{{if(en.isIntersecting){{setTimeout(()=>en.target.classList.add('visible'),i*80);ro.unobserve(en.target);}}}})}},{{threshold:0.1}});document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+        document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({{behavior:'smooth'}});}}));
+    </script>
+</body>
+</html>
