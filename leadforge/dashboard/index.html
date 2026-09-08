@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadForge AI — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;--text:#fafafa;--muted:#737373;--accent:#d4a574;--accent-glow:rgba(212,165,116,0.1);--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#0ea5e9;--purple:#a855f7;--border:rgba(255,255,255,0.06);--radius:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 40px;max-width:420px;width:100%;text-align:center}
+.login-card .logo{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;margin-bottom:8px}
+.login-card .logo span{color:var(--accent)}
+.login-card p{color:var(--muted);font-size:.9rem;margin-bottom:32px}
+.login-card input{width:100%;padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.95rem;margin-bottom:16px;outline:none;transition:border-color .3s}
+.login-card input:focus{border-color:var(--accent)}
+.login-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 25px var(--accent-glow)}
+.login-err{color:var(--red);font-size:.85rem;margin-top:12px;display:none}
+
+/* Dashboard */
+.dashboard{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;z-index:50}
+.sidebar .logo{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;padding:0 24px;margin-bottom:40px}
+.sidebar .logo span{color:var(--accent)}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;color:var(--muted);font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--surface2)}
+.nav-item .icon{font-size:1.2rem;width:24px;text-align:center}
+
+.main{margin-left:240px;padding:32px 40px;min-height:100vh}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.topbar h1{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700}
+.topbar .user{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem}
+.topbar .user .avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:700;font-size:.9rem}
+
+/* Stats cards */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all .3s}
+.stat-card:hover{border-color:rgba(212,165,116,0.2);transform:translateY(-2px)}
+.stat-card .label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-card .value{font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--text)}
+.stat-card .change{font-size:.8rem;margin-top:8px}
+.stat-card .change.up{color:var(--green)}
+.stat-card .change.down{color:var(--red)}
+.stat-card .icon{position:absolute;top:20px;right:20px;font-size:1.5rem;opacity:.3}
+
+/* Pipeline */
+.pipeline-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:24px}
+.pipeline-section h2{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:20px}
+.pipeline-bar{display:flex;gap:4px;height:12px;border-radius:6px;overflow:hidden;margin-bottom:16px}
+.pipeline-segment{height:100%;transition:all .3s}
+.pipeline-legend{display:flex;flex-wrap:wrap;gap:16px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.table-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border)}
+.table-header h2{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600}
+.table-header .filters{display:flex;gap:8px}
+.filter-btn{padding:6px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.8rem;cursor:pointer;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{color:var(--accent);border-color:var(--accent)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:14px 24px;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:14px 24px;font-size:.875rem;border-bottom:1px solid var(--border);color:var(--text)}
+tr:hover{background:var(--surface2)}
+tr:last-child td{border-bottom:none}
+.score-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;font-weight:700;font-size:.85rem}
+.score-high{background:rgba(34,197,94,0.15);color:var(--green)}
+.score-mid{background:rgba(245,158,11,0.15);color:var(--yellow)}
+.score-low{background:rgba(239,68,68,0.15);color:var(--red)}
+.status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600}
+.st-new{background:rgba(59,130,246,0.15);color:var(--blue)}
+.st-qualified{background:rgba(34,197,94,0.15);color:var(--green)}
+.st-website{background:rgba(168,85,247,0.15);color:var(--purple)}
+.st-contacted{background:rgba(245,158,11,0.15);color:var(--yellow)}
+.view-btn{padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.8rem;color:var(--accent);cursor:pointer;transition:all .2s}
+.view-btn:hover{background:var(--accent);color:var(--bg)}
+
+/* Website gallery */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.gallery-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .3s;cursor:pointer}
+.gallery-card:hover{transform:translateY(-4px);border-color:rgba(212,165,116,0.2)}
+.gallery-preview{height:160px;background:linear-gradient(135deg,var(--surface2),var(--surface));display:flex;align-items:center;justify-content:center;font-size:3rem}
+.gallery-info{padding:16px 20px}
+.gallery-info h3{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.gallery-info p{font-size:.8rem;color:var(--muted)}
+.gallery-info .meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.gallery-info .meta .cat{font-size:.75rem;color:var(--accent);background:rgba(212,165,116,0.08);padding:3px 10px;border-radius:12px}
+
+/* Email queue */
+.email-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.email-card .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.email-card .to{font-size:.9rem;color:var(--muted)}
+.email-card .to b{color:var(--text)}
+.email-card .subject{font-size:1.05rem;font-weight:600;margin-bottom:12px}
+.email-card .preview{font-size:.85rem;color:var(--muted);line-height:1.6;background:var(--surface2);border-radius:12px;padding:16px;margin-bottom:16px}
+.email-actions{display:flex;gap:10px}
+.email-btn{padding:8px 20px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.email-send{background:var(--green);color:#fff}
+.email-send:hover{background:#16a34a}
+.email-edit{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.email-edit:hover{border-color:var(--accent)}
+
+/* Page sections */
+.page{display:none}
+.page.active{display:block}
+
+/* Responsive */
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.sidebar{width:60px}.sidebar .logo{font-size:0;padding:0;text-align:center}.sidebar .logo span{font-size:1.2rem}.nav-item span:not(.icon){display:none}.nav-item{padding:12px;text-align:center}.main{margin-left:60px;padding:20px}.stats-grid{grid-template-columns:1fr}.gallery-grid{grid-template-columns:1fr}th,td{padding:10px 14px;font-size:.8rem}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+<div class="login-card">
+<div class="logo">Lead<span>Forge</span></div>
+<p>Admin Dashboard — Sign in to manage your leads</p>
+<input type="password" id="loginPass" placeholder="Enter password" onkeypress="if(event.key==='Enter')doLogin()">
+<button class="login-btn" onclick="doLogin()">Sign In →</button>
+<div class="login-err" id="loginErr">Wrong password. Try again.</div>
+<p style="margin-top:20px;font-size:.75rem;color:var(--muted)">Hint: leadforge2026</p>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+<aside class="sidebar">
+<div class="logo">Lead<span>Forge</span></div>
+<div class="nav-item active" onclick="showPage('overview',this)"><span class="icon">📊</span><span>Overview</span></div>
+<div class="nav-item" onclick="showPage('leads',this)"><span class="icon">🐛</span><span>Leads</span></div>
+<div class="nav-item" onclick="showPage('websites',this)"><span class="icon">🌐</span><span>Websites</span></div>
+<div class="nav-item" onclick="showPage('emails',this)"><span class="icon">📧</span><span>Emails</span></div>
+<div class="nav-item" onclick="showPage('pipeline',this)"><span class="icon">📋</span><span>Pipeline</span></div>
+</aside>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<div class="page active" id="page-overview">
+<div class="topbar">
+<h1>Overview</h1>
+<div class="user"><div class="avatar">N</div><span>Nihar</span></div>
+</div>
+
+<div class="stats-grid">
+<div class="stat-card"><span class="icon">🏢</span><div class="label">Total Businesses</div><div class="value" id="stat-businesses">-</div><div class="change up">↑ Mumbai scraped</div></div>
+<div class="stat-card"><span class="icon">🌐</span><div class="label">Demo Websites</div><div class="value" id="stat-websites">-</div><div class="change up">↑ Deployed on Vercel</div></div>
+<div class="stat-card"><span class="icon">📧</span><div class="label">Emails Found</div><div class="value" id="stat-emails">-</div><div class="change up">↑ Can contact</div></div>
+<div class="stat-card"><span class="icon">⭐</span><div class="label">Qualified Leads</div><div class="value" id="stat-qualified">-</div><div class="change up">↑ Score 75+</div></div>
+</div>
+
+<div class="pipeline-section">
+<h2>Pipeline Status</h2>
+<div class="pipeline-bar">
+<div class="pipeline-segment" style="background:var(--blue);width:10%" title="New"></div>
+<div class="pipeline-segment" style="background:var(--green);width:50%" title="Qualified"></div>
+<div class="pipeline-segment" style="background:var(--purple);width:30%" title="Website Generated"></div>
+<div class="pipeline-segment" style="background:var(--yellow);width:5%" title="Contacted"></div>
+<div class="pipeline-segment" style="background:var(--red);width:5%" title="Rejected"></div>
+</div>
+<div class="pipeline-legend">
+<div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>New</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Qualified</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Website Generated</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Contacted</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Rejected</div>
+</div>
+</div>
+
+<div class="table-wrap">
+<div class="table-header"><h2>Top 10 Leads</h2><div class="filters"><button class="filter-btn active">All</button></div></div>
+<table><thead><tr><th>Business</th><th>Category</th><th>Rating</th><th>Score</th><th>Status</th><th></th></tr></thead>
+<tbody id="top-leads-body"></tbody></table>
+</div>
+</div>
+
+<!-- LEADS -->
+<div class="page" id="page-leads">
+<div class="topbar"><h1>Leads</h1><div class="user"><div class="avatar">N</div><span>Nihar</span></div></div>
+<div class="table-wrap">
+<div class="table-header"><h2>All Leads</h2><div class="filters">
+<button class="filter-btn active" onclick="filterLeads('all',this)">All</button>
+<button class="filter-btn" onclick="filterLeads('Plumber',this)">Plumbers</button>
+<button class="filter-btn" onclick="filterLeads('Electrician',this)">Electricians</button>
+<button class="filter-btn" onclick="filterLeads('Carpenter',this)">Carpenters</button>
+<button class="filter-btn" onclick="filterLeads('Waterproof',this)">Waterproofing</button>
+<button class="filter-btn" onclick="filterLeads('Painter',this)">Painters</button>
+</div></div>
+<table><thead><tr><th>Business</th><th>Category</th><th>Phone</th><th>Email</th><th>Rating</th><th>Reviews</th><th>Score</th><th>Status</th></tr></thead>
+<tbody id="all-leads-body"></tbody></table>
+</div>
+</div>
+
+<!-- WEBSITES -->
+<div class="page" id="page-websites">
+<div class="topbar"><h1>Demo Websites</h1><div class="user"><div class="avatar">N</div><span>Nihar</span></div></div>
+<div class="gallery-grid" id="websites-grid"></div>
+</div>
+
+<!-- EMAILS -->
+<div class="page" id="page-emails">
+<div class="topbar"><h1>Email Queue</h1><div class="user"><div class="avatar">N</div><span>Nihar</span></div></div>
+<div id="email-list"></div>
+</div>
+
+<!-- PIPELINE -->
+<div class="page" id="page-pipeline">
+<div class="topbar"><h1>Pipeline Tracker</h1><div class="user"><div class="avatar">N</div><span>Nihar</span></div></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="label">New</div><div class="value" id="pipe-new">-</div></div>
+<div class="stat-card"><div class="label">Researched</div><div class="value" id="pipe-researched">-</div></div>
+<div class="stat-card"><div class="label">Qualified</div><div class="value" id="pipe-qualified">-</div></div>
+<div class="stat-card"><div class="label">Website Generated</div><div class="value" id="pipe-website">-</div></div>
+</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="label">Contacted</div><div class="value" id="pipe-contacted">-</div></div>
+<div class="stat-card"><div class="label">Replied</div><div class="value" id="pipe-replied">-</div></div>
+<div class="stat-card"><div class="label">Meeting</div><div class="value" id="pipe-meeting">-</div></div>
+<div class="stat-card"><div class="label">Client</div><div class="value" id="pipe-client">-</div></div>
+</div>
+</div>
+
+</main>
+</div>
+
+<script>
+const SUPABASE_URL='https://bdmxpimsbpjruqdqinka.supabase.co';
+const SUPABASE_KEY='***';
+
+function doLogin(){
+const pass=document.getElementById('loginPass').value;
+if(pass==='leadforge2026'){
+document.getElementById('loginWrap').style.display='none';
+document.getElementById('dashboard').style.display='block';
+loadData();
+}else{
+document.getElementById('loginErr').style.display='block';
+}
+}
+
+function showPage(id,el){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById('page-'+id).classList.add('active');
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+el.classList.add('active');
+}
+
+async function fetchAPI(path){
+const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{
+headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+});
+return res.json();
+}
+
+function scoreClass(s){return s>=80?'score-high':s>=60?'score-mid':'score-low'}
+function statusBadge(s){
+const map={'NEW':'st-new','QUALIFIED':'st-qualified','WEBSITE_GENERATED':'st-website','CONTACTED':'st-contacted','RESEARCHED':'st-new'};
+return `<span class="status-badge ${map[s]||'st-new'}">${s.replace('_',' ')}</span>`;
+}
+
+async function loadData(){
+// Stats
+const businesses=await fetchAPI('businesses?select=id');
+const websites=await fetchAPI('generated_websites?select=id');
+const emails=await fetchAPI('businesses?select=id&email=not.is.null');
+const leads=await fetchAPI('leads?select=id&status=eq.QUALIFIED');
+
+document.getElementById('stat-businesses').textContent=businesses.length;
+document.getElementById('stat-websites').textContent=websites.length;
+document.getElementById('stat-emails').textContent=emails.length;
+document.getElementById('stat-qualified').textContent=leads.length;
+
+// Top leads
+const topLeads=await fetchAPI('leads?select=lead_score,status,business_id&order=lead_score.desc&limit=10');
+const bizIds=topLeads.map(l=>`"${l.business_id}"`).join(',');
+const bizData=await fetchAPI(`businesses?select=id,name,category,rating& id=in.(${bizIds}`);
+const bizMap={};bizData.forEach(b=>bizMap[b.id]=b);
+
+document.getElementById('top-leads-body').innerHTML=topLeads.map(l=>{
+const b=bizMap[l.business_id]||{};
+return `<tr><td>${b.name||'Unknown'}</td><td>${b.category||'-'}</td><td>${b.rating||'-'}★</td><td><span class="score-badge ${scoreClass(l.lead_score||0)}">${l.lead_score||0}</span></td><td>${statusBadge(l.status)}</td><td><button class="view-btn" onclick="window.open('https://vercel.com')">View</button></td></tr>`;
+}).join('');
+
+// All leads
+const allLeads=await fetchAPI('businesses?select=id,name,category,phone,email,rating,review_count&has_website=eq.false&order=rating.desc&limit=100');
+const intelData=await fetchAPI('business_intelligence?select=business_id,lead_score');
+const intelMap={};intelData.forEach(i=>intelMap[i.business_id]=i);
+const leadStatus=await fetchAPI('leads?select=business_id,status');
+const statusMap={};leadStatus.forEach(l=>statusMap[l.business_id]=l.status);
+
+window.allLeadsData=allLeads.map(b=>({...b,score:intelMap[b.id]?.lead_score||0,status:statusMap[b.id]||'NEW'}));
+renderLeads(window.allLeadsData);
+
+// Websites
+const sites=await fetchAPI('generated_websites?select=business_id,preview_url,status');
+const siteBizIds=sites.map(s=>`"${s.business_id}"`).join(',');
+const siteBiz=await fetchAPI(`businesses?select=id,name,category& id=in.(${siteBizIds}`);
+const siteBizMap={};siteBiz.forEach(b=>siteBizMap[b.id]=b);
+
+document.getElementById('websites-grid').innerHTML=sites.map(s=>{
+const b=siteBizMap[s.business_id]||{};
+const catIcon={'Plumber':'🚿','Electrician':'⚡','Carpenter':'🪑','Waterproof':'💧','Painter':'🎨','Interior':'🏠'}[b.category?.split(' ')[0]]||'🔧';
+return `<div class="gallery-card" onclick="window.open('${s.preview_url}')"><div class="gallery-preview">${catIcon}</div><div class="gallery-info"><h3>${b.name||'Unknown'}</h3><p>${s.status||'DEPLOYED'}</p><div class="meta"><span class="cat">${b.category||'Service'}</span><span class="view-btn">Open →</span></div></div></div>`;
+}).join('');
+
+// Emails
+const emailDrafts=await fetchAPI('emails?select=*&order=created_at.desc');
+const emailBizIds=emailDrafts.map(e=>`"${e.business_id}"`).join(',');
+const emailBiz=await fetchAPI(`businesses?select=id,name,category& id=in.(${emailBizIds}`);
+const emailBizMap={};emailBiz.forEach(b=>emailBizMap[b.id]=b);
+
+document.getElementById('email-list').innerHTML=emailDrafts.map(e=>{
+const b=emailBizMap[e.business_id]||{};
+return `<div class="email-card"><div class="header"><div class="to">To: <b>${e.contact_email||'N/A'}</b></div>${statusBadge(e.status)}</div><div class="subject">${e.subject||'No subject'}</div><div class="preview">${(e.message||'').replace(/<[^>]+>/g,'').slice(0,200)}...</div><div class="email-actions"><button class="email-btn email-send" onclick="alert('Send via Resend from your PC')">📤 Send</button><button class="email-btn email-edit" onclick="window.open('https://hub.drking.au')">Edit</button></div></div>`;
+}).join('')||'<p style="color:var(--muted);text-align:center;padding:40px">No emails drafted yet</p>';
+
+// Pipeline
+for(const status of ['NEW','RESEARCHED','QUALIFIED','WEBSITE_GENERATED','CONTACTED','REPLIED','MEETING','CLIENT']){
+const data=await fetchAPI(`leads?select=id&status=eq.${status}`);
+const el=document.getElementById('pipe-'+status.toLowerCase().replace('website_generated','website').replace('replied','replied').replace('meeting','meeting').replace('client','client'));
+if(el)el.textContent=data.length;
+}
+}
+
+function renderLeads(data){
+document.getElementById('all-leads-body').innerHTML=data.map(b=>
+`<tr><td>${b.name||'Unknown'}</td><td>${b.category||'-'}</td><td>${b.phone||'-'}</td><td>${b.email||'-'}</td><td>${b.rating||'-'}★</td><td>${b.review_count||0}</td><td><span class="score-badge ${scoreClass(b.score)}">${b.score}</span></td><td>${statusBadge(b.status)}</td></tr>`
+).join('');
+}
+
+function filterLeads(cat,el){
+document.querySelectorAll('.filter-btn').forEach(f=>f.classList.remove('active'));
+el.classList.add('active');
+const filtered=cat==='all'?window.allLeadsData:window.allLeadsData.filter(b=>b.category?.toLowerCase().includes(cat.toLowerCase()));
+renderLeads(filtered);
+}
+</script>
+</body>
+</html>
